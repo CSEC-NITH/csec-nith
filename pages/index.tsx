@@ -13,8 +13,9 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a>CSEC</a> NITH
+          Welcome to <a href="https://www.instagram.com/csec_nith">CSEC</a> NITH
         </h1>
+        <h2>🚧 This website is under construction</h2>
       </main>
     </div>
   );

@@ -8,7 +8,7 @@ export default async function Blogs() {
     <>
       <h1>Blog</h1>
       {blogs.map((blog) => (
-        <Link href={`/blog/${blog.slug}`}>
+        <Link key={blog.slug} href={`/blog/${blog.slug}`}>
           <h2>{blog.title}</h2>
         </Link>
       ))}

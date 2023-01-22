@@ -1,4 +1,5 @@
-import { getFilesList } from '../../../lib/mdx';
+import { getFilesList, mdxToHtml } from '../../../lib/mdx';
+import { MdxContent } from '../../../components/mdx-container';
 
 export async function generateStaticParams() {
   const blogs = await getFilesList('blogs');
@@ -9,10 +10,13 @@ export async function generateStaticParams() {
 }
 
 export default async function BlogPost({ params }: any) {
+  const { frontmatter, serialized } = await mdxToHtml('blogs', params.slug);
+
+  console.log(serialized);
   return (
     <>
-      <h1>Blog</h1>
-      <div>This is a blog</div>
+      {frontmatter.date}
+      <MdxContent source={serialized} />
     </>
   );
 }

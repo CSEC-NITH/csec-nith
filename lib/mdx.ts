@@ -1,6 +1,8 @@
 import path from 'path';
 import matter from 'gray-matter';
 import { readdirSync, readFileSync } from 'fs';
+import { type MDXRemoteSerializeResult } from 'next-mdx-remote';
+import { serialize } from 'next-mdx-remote/serialize';
 
 const root = process.cwd();
 
@@ -26,4 +28,33 @@ export async function getFilesList(type: string) {
       ...allPosts,
     ];
   }, []);
+}
+
+type Frontmatter = {
+  title: string;
+  date: string;
+};
+
+type Post<TFrontmatter> = {
+  serialized: MDXRemoteSerializeResult;
+  frontmatter: TFrontmatter;
+};
+
+export async function mdxToHtml(
+  type: string,
+  slug: string
+): Promise<Post<Frontmatter>> {
+  const source = path.join(root, 'data', type, `${slug}.mdx`);
+  const fileContent = readFileSync(source, 'utf-8');
+
+  const serialized = await serialize(fileContent, {
+    parseFrontmatter: true,
+  });
+
+  const frontmatter = serialized.frontmatter as Frontmatter;
+
+  return {
+    frontmatter,
+    serialized,
+  };
 }

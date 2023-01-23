@@ -9,10 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "add": "^2.0.6",
     "gray-matter": "^4.0.3",
     "next": "13.1.0",
+    "next-mdx-remote": "^4.3.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@types/node": "18.11.8",

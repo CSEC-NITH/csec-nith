@@ -1,37 +1,13 @@
 import path from 'path';
-import matter from 'gray-matter';
 import { readdirSync, readFileSync } from 'fs';
 import { type MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 
 const root = process.cwd();
 
-export async function getFilesList(type: string) {
-  const files = readdirSync(path.join(root, 'data', type));
-
-  return files.reduce((allPosts: any, postSlug: string) => {
-    const fileContent = readFileSync(
-      path.join(root, 'data', type, postSlug),
-      'utf-8'
-    );
-    const { content, data } = matter(fileContent);
-    return [
-      {
-        content: content,
-        title: data.title || 'Untitled Post',
-        description: data.description || 'This post has no description',
-        date: data.date || '--/--/----',
-        slug: postSlug.replace('.mdx', ''),
-        image: data.image || '',
-        link: data.link || '',
-      },
-      ...allPosts,
-    ];
-  }, []);
-}
-
 type Frontmatter = {
   title: string;
+  description: string;
   date: string;
 };
 
@@ -40,7 +16,48 @@ type Post<TFrontmatter> = {
   frontmatter: TFrontmatter;
 };
 
-export async function mdxToHtml(
+type PostInfo = Frontmatter & {
+  slug: string;
+};
+
+/**
+ * Get a list of all posts with their frontmatter
+ * @param type type of the posts (sub directory in `/data`)
+ * @returns {PostInfo[]} list of all posts of type `type`
+ */
+export async function getPostList(type: string): Promise<PostInfo[]> {
+  const files = readdirSync(path.join(root, 'data', type));
+
+  return Promise.all(
+    files.map(async (postSlug: string) => {
+      const fileContent = readFileSync(
+        path.join(root, 'data', type, postSlug),
+        'utf-8'
+      );
+
+      const serialized = await serialize(fileContent, {
+        parseFrontmatter: true,
+      });
+
+      const frontmatter = serialized.frontmatter as Frontmatter;
+
+      return {
+        title: frontmatter.title,
+        description: frontmatter.description,
+        date: frontmatter.date,
+        slug: postSlug.replace('.mdx', ''),
+      };
+    })
+  );
+}
+
+/**
+ * Get a single post with its frontmatter and content
+ * @param type type of the posts (sub directory in `/data`)
+ * @param slug slug of the post
+ * @returns {Post<Frontmatter>} single post
+ */
+export async function getPost(
   type: string,
   slug: string
 ): Promise<Post<Frontmatter>> {

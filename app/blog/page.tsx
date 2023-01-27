@@ -1,17 +1,22 @@
 import Link from 'next/link';
-import { getFilesList } from '../../lib/mdx';
+import { getPostList } from '../../lib/mdx';
 
 export default async function Blogs() {
-  const blogs = await getFilesList('blogs');
+  const blogs = await getPostList('blogs');
 
   return (
     <>
-      <h1>Blog</h1>
-      {blogs.map((blog) => (
-        <Link key={blog.slug} href={`/blog/${blog.slug}`}>
-          <h2>{blog.title}</h2>
-        </Link>
-      ))}
+      <h1>Blogs</h1>
+      <ul>
+        {blogs.map((blog) => (
+          <li key={blog.slug}>
+            <Link href={`/blog/${blog.slug}`}>
+              {blog.title} - {blog.date}
+            </Link>
+            <p>{blog.description}</p>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }

@@ -1,7 +1,10 @@
 export default function Home() {
   return (
     <>
-      <div>Welcome to CSEC NITH</div>
+      <div className="text-2xl">
+        Welcome to CSEC NITH using{' '}
+        <span className="animate-pulse">Tailwind</span>
+      </div>
     </>
   );
 }
